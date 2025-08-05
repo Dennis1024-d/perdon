@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Tatael ._.">
+  <title>Starter Fit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Roboto Condensed', sans-serif;
+      background-color: #f4f4f4;
+      color: #000;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #000;
+      color: #fff;
+      position: relative;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+    }
+
+    nav ul li a:hover {
+      text-decoration: underline;
+      transform: translateY(-5px);
+      display: inline-block;
+      transition: transform 0.3s ease, text-decoration 0.3s ease;
+    }
+
+    .ubicacion, .lupa, .carrito {
+      margin-left: 30px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .lupa {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  font-size: 24px; /* Aumenta el tamaño de la lupa */
+  cursor: pointer;
+  z-index: 101;
+}
+
+.lupa:hover {
+  background-color: #222;
+  border-radius: 8px;
+}
+
+.busqueda {
+  display: none; /* Se mantiene oculta hasta que se haga clic */
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background-color: #fff;
+  color: #000;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 100;
+  width: 400px; /* Cambio: 600px puede salirse en pantallas pequeñas */
+  min-height: 300px;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 90vw;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.busqueda .sugerencias {
+  width: 100%; /* Uso el 100% del ancho disponible */
+  font-size: 18px;
+  padding-right: 10px;
+  /* Eliminado: max-height: 150px; para permitir que las sugerencias ocupen más espacio */
+  overflow-y: auto; /* Mantiene el desplazamiento vertical para las sugerencias si es necesario */
+  border-bottom: 1px solid #ccc; /* Línea divisoria entre sugerencias y resultados */
+}
+
+.busqueda .resultados {
+  width: 100%; /* Uso el 100% del ancho disponible */
+  font-size: 18px;
+}
+
+.busqueda input {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.busqueda ul {
+  margin-top: 10px;
+  padding-left: 0;
+}
+
+.busqueda::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Sugerencias en mayúsculas y fuente utilizada */
+.busqueda .sugerencias strong {
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.busqueda .sugerencias ul li {
+  list-style: none;
+}
+
+.busqueda .sugerencias ul li a {
+  color: black;
+  text-decoration: none;
+}
+
+.busqueda .sugerencias ul li a:hover {
+  color: #007BFF;
+  text-decoration: underline;
+}s
+
+    .carrito {
+      position: relative;
+    }
+
+    #carrito-menu {
+      display: none;
+      position: absolute;
+      top: 30px;
+      right: 0;
+      background: #fff;
+      color: #000;
+      width: 300px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      z-index: 100;
+    }
+
+    #carrito-menu.active {
+      display: block;
+    }
+
+    #carrito-items {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .carrito-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+
+    .carrito-controles {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .carrito-controles button {
+      padding: 2px 6px;
+    }
+
+    .carrito-total {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .carrito-menu button {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px;
+    }
+
+    .comprar-btn {
+      background-color: green;
+      color: white;
+      border: none;
+    }
+
+    .print-btn {
+      background-color: gray;
+      color: white;
+      border: none;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin: 40px 0 30px;
+      text-transform: uppercase;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 8rem;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 0 40px 40px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .card img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .title {
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .price {
+      color: green;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+ .banner-scroll {
+      width: 100%;
+      overflow: hidden;
+      background-color: black;
+      color: white;
+      padding: 10px 0;
+      font-family: Arial, sans-serif;
+      position: relative;
+      text-align: center;
+    }
+    .banner-scroll span {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scroll-left 40s linear infinite;
+      font-weight: bold;
+      font-size: 18px;
+      padding-left: 100%;
+    }
+    @keyframes scroll-left {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-100%); }
+    }
+
+     footer {
+  background-color: black;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.astros-footer {
+  margin-bottom: 10px;
+}
+
+.astros-footer span {
+  /* Propiedades para el estilo del logo de FC Barcelona */
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: bold;
+  
+  /* Nuevo: Aumenta el tamaño de la fuente para que se vea gigante */
+  font-size: 12rem; /* Puedes ajustar este valor según la necesidad de tu página */
+  
+  /* Nuevo: Ajusta el espaciado entre letras para un efecto más compacto */
+  letter-spacing: -3px; /* Puedes ajustar este valor si lo deseas */
+  
+  /* Propiedades de la animación (sin cambios) */
+  background: linear-gradient(-45deg, red, white, red, white, red);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowMove 4s linear infinite;
+  display: inline-block;
+}
+
+@keyframes rainbowMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+.footer-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+     .tallas {
+    display: none;
+    margin-top: 10px;
+  }
+
+  .card:hover .tallas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .talla {
+    border: 1px solid black;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .talla.seleccionada {
+    background-color: black;
+    color: white;
+  }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><a href="Proyecto FN.html" style="text-decoration: none; color: white;">Astros Store</a></div>
+    <nav>
+      <ul>
+        <li><a href="started-fit.html">Started Fit</a></li>
+        <li><a href="elite fit pro.html">Elite Fit</a></li>
+        <li><a href="legend fit pro.html">Leyends Fit</a></li>
+        <li><a href="camisolas pro 2.html">Camisolas</a></li>
+        <li><a href="accesorios pro.html">Accesorios</a></li>
+        <li><a href="descuntos.html">Sale</a></li>
+      </ul>
+    </nav>
+    <div class="ubicacion">📍 Guatemala</div>
+    <div class="lupa">
+  <span id="iconoLupa">🔍</span>
+  <div class="busqueda" id="cuadroBusqueda">
+    <!-- contenido de búsqueda aquí -->
+    <div class="sugerencias">
+      <strong>SUGERENCIAS</strong>
+      <ul>
+        <li><a href="started-fit.html">Started Fit</a></li>
+        <li><a href="elite fit pro.html">Elite Fit</a></li>
+        <li><a href="leyends fit pro.html">Leyends Fit</a></li>
+        <li><a href="camisolas pro 2.html">Camisolas</a></li>
+        <li><a href="accesorios pro.html">Accesorios</a></li>
+        <li><a href="descuntos.html">Sale</a></li>
+      </ul>
+    </div>
+    <div class="resultados">
+      <strong>RESULTADOS</strong><br>
+      <input type="text" id="campoBusqueda" placeholder="Buscar productos..." oninput="buscarProducto()">
+      <ul id="listaResultados"></ul>
+    </div>
+  </div>
+</div>
+
+
+    <div class="carrito" onclick="toggleCarrito()">🛒 Carrito
+      <div id="carrito-menu">
+        <p>Tu pedido:</p>
+        <div id="carrito-items"></div>
+        <div class="carrito-total">Total: Q.0</div>
+        <button class="comprar-btn" onclick="redirigirCompra()">Comprar</button>
+        
+      </div>
+    </div>
+  </header>
+
+  <h1>Retro Fit</h1>
+  <div class="banner-scroll">
+    <span> ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ● CON LA COMODIDAD Y CALIDAD DE LOS GRANDES ●  </span>
+  </div>
+   <div class="container">
+   <!-- Tarjetas de productos -->
+   <div class="card" data-nombre="FCBARCA" data-precio="1500">
+  <img src="barcaOG.jpg" alt="FC Barcelona">
+  <div class="title">FC Barcelona (2008-2009)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div>
+    <div class="talla">M</div>
+    <div class="talla">L</div>
+    <div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+    
+<div class="card" data-nombre="RMmadrid" data-precio="1500">
+  <img src="realMOG.jpg" alt="Real Madrid">
+  <div class="title">Real Madrid (2001-2002</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+   <div class="card" data-nombre="UnitedOG" data-precio="1500">
+  <img src="unitedOG.AVIF" alt="Manchester United" />
+  <div class="title">Manchester United (1998-1999)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="RiverOG" data-precio="1500">
+  <img src="riverOG.png" alt="River Plate" />
+  <div class="title">River Plate (1996)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="BrasilOG" data-precio="1500">
+  <img src="brasilOG.jpg" alt="Brasil Fc" />
+  <div class="title">Brasil Fc (2002)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="MillanOG" data-precio="1500">
+  <img src="millanOG.JPEG" alt="AC Milan" />
+  <div class="title">AC Milan (2006-2007)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="ArgentinaOG" data-precio="1500">
+  <img src="argentinaOG.jpg" alt="Argentina Fc" />
+  <div class="title">Argentina Fc (1986)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="JuventusOG" data-precio="1500">
+  <img src="juventusOG.jpg" alt="Juventus" />
+  <div class="title">Juventus (1995-1996)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="AlemaniaOG" data-precio="1500">
+  <img src="alemaniaOG.JPG" alt="Alemania Fc" />
+  <div class="title">Alemania Fc (1990)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="FranciaOG" data-precio="1500">
+  <img src="franciaOG.JPG" alt="Francia Fc" />
+  <div class="title">Francia Fc (1990)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="HolandaOG" data-precio="1500">
+  <img src="holandaOG.JPG" alt="Holanda Fc" />
+  <div class="title">Holanda Fc (1988)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="BocaOG" data-precio="1500">
+  <img src="bocaOG.png" alt="Boca Juniors" />
+  <div class="title">Boca Juniors (2001-2002)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="BayernOG" data-precio="1500">
+  <img src="bayernOG.JPG" alt="Bayern Múnich" />
+  <div class="title">Bayern Múnich (2000-2001)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="ArsenalOG" data-precio="1500">
+  <img src="arsenalOG.avif" alt="Arsenal FC" />
+  <div class="title">Arsenal FC (2003-2004)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+<div class="card" data-nombre="AjaxOG" data-precio="1500">
+  <img src="ajaxOG.JPG" alt="Ajax" />
+  <div class="title">Ajax (1995)</div>
+  <div class="price">Q.1500</div>
+  <div class="tallas">
+    <div class="talla">S</div><div class="talla">M</div><div class="talla">L</div><div class="talla">XL</div>
+  </div>
+  <button onclick="agregarAlCarrito(this)">Agregar al carrito</button>
+</div>
+
+  </div>
+
+   <footer>
+  <div class="astros-footer">
+    <span>ASTROS STORE</span>
+  </div>
+
+  <div class="footer-content">
+    <div>
+      <p>Contacto:</p>
+      <p>PBX: 2200-0000</p>
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=astrosstoregt@gmail.com" target="_blank">
+    astrosstoregt@gmail.com
+    </a>
+      <p>Dirección: 24av 20-24 Zona 1 Guatemala</p>
+       <p>&copy; 2025 Uniformes Strated Astros Store. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+
+
+  <script>
+// Lista de productos con sus URLs de categoría
+const productos = [
+  { nombre: "Selección de Guatemala", url: "started-fit.html" },
+  { nombre: "Comunicaciones FC", url: "started-fit.html" },
+  { nombre: "CSD Municipal", url: "started-fit.html" },
+  { nombre: "Club América", url: "started-fit.html" },
+  { nombre: "Selección de Argentina", url: "started-fit.html" },
+  { nombre: "Selección de Brasil", url: "started-fit.html" },
+  { nombre: "Chivas de Guadalajara", url: "started-fit.html" },
+  { nombre: "Cruz Azul", url: "started-fit.html" },
+  { nombre: "LA Galaxy", url: "started-fit.html" },
+  { nombre: "Tigres UANL", url: "started-fit.html" },
+  { nombre: "Selección de España", url: "started-fit.html" },
+  { nombre: "Orlando City", url: "started-fit.html" },
+  { nombre: "Al-Nassr FC", url: "started-fit.html" },
+  { nombre: "Inter Miami CF", url: "started-fit.html" },
+  { nombre: "Ajax", url: "started-fit.html" },
+
+  { nombre: "Borussia Dortmund", url: "elite fit pro.html" },
+  { nombre: "Olympique de Lyon", url: "elite fit pro.html" },
+  { nombre: "Flamengo", url: "elite fit pro.html" },
+  { nombre: "Atlético de Madrid", url: "elite fit pro.html" },
+  { nombre: "Benfica", url: "elite fit pro.html" },
+  { nombre: "Galatasaray", url: "elite fit pro.html" },
+  { nombre: "Lazio", url: "elite fit pro.html" },
+  { nombre: "RB Leipzig", url: "elite fit pro.html" },
+  { nombre: "Sporting Lisboa", url: "elite fit pro.html" },
+  { nombre: "Napoli", url: "elite fit pro.html" },
+  { nombre: "Palmeiras", url: "elite fit pro.html" },
+  { nombre: "AS Roma", url: "elite fit pro.html" },
+  { nombre: "Sevilla FC", url: "elite fit pro.html" },
+  { nombre: "Villarreal CF", url: "elite fit pro.html" },
+  { nombre: "Tottenham Hotspur", url: "elite fit pro.html" },
+
+  { nombre: "FC Barcelona", url: "legend fit pro.html" },
+  { nombre: "Real Madrid", url: "legend fit pro.html" },
+  { nombre: "Manchester United", url: "legend fit pro.html" },
+  { nombre: "River Plate", url: "legend fit pro.html" },
+  { nombre: "Paris Saint-Germain", url: "legend fit pro.html" },
+  { nombre: "AC Milan", url: "legend fit pro.html" },
+  { nombre: "Liverpool FC", url: "legend fit pro.html" },
+  { nombre: "Juventus", url: "legend fit pro.html" },
+  { nombre: "Inter de Milán", url: "legend fit pro.html" },
+  { nombre: "Manchester City", url: "legend fit pro.html" },
+  { nombre: "Chelsea FC", url: "legend fit pro.html" },
+  { nombre: "Boca Juniors", url: "legend fit pro.html" },
+  { nombre: "Bayern Múnich", url: "legend fit pro.html" },
+  { nombre: "Arsenal FC", url: "legend fit pro.html" },
+  { nombre: "Ajax", url: "legend fit pro.html" },
+
+  { nombre: "FC Barcelona (2008-2009)", url: "camisolas pro 2.html" },
+  { nombre: "Real Madrid (2001-2002)", url: "camisolas pro 2.html" },
+  { nombre: "Manchester United (1998-1999)", url: "camisolas pro 2.html" },
+  { nombre: "River Plate (1996)", url: "camisolas pro 2.html" },
+  { nombre: "Brasil Fc (2002)", url: "camisolas pro 2.html" },
+  { nombre: "AC Milan (2006-2007)", url: "camisolas pro 2.html" },
+  { nombre: "Argentina Fc (1986)", url: "camisolas pro 2.html" },
+  { nombre: "Juventus (1995-1996)", url: "camisolas pro 2.html" },
+  { nombre: "Alemania Fc (1990)", url: "camisolas pro 2.html" },
+  { nombre: "Francia Fc (1990)", url: "camisolas pro 2.html" },
+  { nombre: "Holanda Fc (1988)", url: "camisolas pro 2.html" },
+  { nombre: "Boca Juniors (2001-2002)", url:"camisolas pro 2.html" },
+  { nombre: "Bayern Múnich (2000-2001)", url: "camisolas pro 2.html" },
+  { nombre: "Arsenal FC (2003-2004)", url: "camisolas pro 2.html" },
+  { nombre: "Ajax (1995)", url:"camisolas pro 2.html" },
+
+  { nombre: "Medias negras", url: "accesorios pro.html" },
+  { nombre: "Medias blancas", url: "accesorios pro.html" },
+  { nombre: "Balón Champions 2025", url: "accesorios pro.html" },
+  { nombre: "Balón Mundial 2025", url: "accesorios pro.html" },
+  { nombre: "Guantes Adidas", url: "accesorios pro.html" },
+  { nombre: "Guantes Nike", url: "accesorios pro.html" }
+];
+
+// Función para manejar los resultados de búsqueda y redirigir
+function buscarProducto() {
+  const entrada = document.getElementById("campoBusqueda").value.toLowerCase();
+  const lista = document.getElementById("listaResultados");
+  lista.innerHTML = "";
+
+  if (entrada.trim() === "") return;
+
+  const resultados = productos.filter(p => p.nombre.toLowerCase().includes(entrada));
+
+  if (resultados.length === 0) {
+    lista.innerHTML = "<li>Lo sentimos, no contamos con ese producto 😔</li>";
+  } else {
+    resultados.forEach(p => {
+      const li = document.createElement("li");
+      li.textContent = p.nombre;
+      li.addEventListener("click", function() {
+        window.location.href = p.url; // Redirige a la categoría
+      });
+      lista.appendChild(li);
+    });
+  }
+} // --- BUSCADOR ---
+
+// Mostrar/Ocultar búsqueda al hacer clic en la lupa
+document.getElementById('iconoLupa').addEventListener('click', function (e) {
+  const cuadro = document.getElementById('cuadroBusqueda');
+  const visible = cuadro.style.display === 'flex';
+  cuadro.style.display = visible ? 'none' : 'flex';
+  e.stopPropagation(); // Detiene la propagación del clic para no cerrarlo inmediatamente
+});
+
+// Cierra la búsqueda si haces clic fuera
+document.addEventListener('click', function (e) {
+  const cuadro = document.getElementById('cuadroBusqueda');
+  const lupa = document.getElementById('iconoLupa');
+  if (!cuadro.contains(e.target) && e.target !== lupa) {
+    cuadro.style.display = 'none';
+  }
+});
+
+// Evita que al hacer clic dentro del cuadro de búsqueda se cierre
+document.getElementById('cuadroBusqueda').addEventListener('click', function (e) {
+  e.stopPropagation();
+});
+
+// --- CARRITO ---
+
+let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+function toggleCarrito() {
+  const menu = document.getElementById("carrito-menu");
+  menu.classList.toggle("active");
+}
+
+function agregarAlCarrito(boton) {
+  const card = boton.closest(".card");
+  const nombre = card.getAttribute("data-nombre");
+  const precio = parseFloat(card.getAttribute("data-precio"));
+  const tallaSeleccionada = card.querySelector(".talla.seleccionada");
+
+  if (!tallaSeleccionada) {
+    alert("Selecciona una talla antes de agregar al carrito.");
+    return;
+  }
+
+  const talla = tallaSeleccionada.textContent;
+  const nombreConTalla = `${nombre} - Talla ${talla}`;
+
+  const existente = carrito.find(item => item.nombre === nombreConTalla);
+  if (existente) {
+    existente.cantidad++;
+  } else {
+    carrito.push({ nombre: nombreConTalla, precio, cantidad: 1 });
+  }
+
+  // Guardar el carrito en localStorage
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+
+  renderizarCarrito();
+}
+
+function renderizarCarrito() {
+  const contenedor = document.getElementById("carrito-items");
+  contenedor.innerHTML = "";
+  let total = 0;
+
+  carrito.forEach((item, index) => {
+    total += item.precio * item.cantidad;
+    contenedor.innerHTML += `
+      <div class="carrito-item">
+        <div>${item.nombre} (Q.${item.precio})</div>
+        <div class="carrito-controles">
+          <button onclick="cambiarCantidad(${index}, -1)">-</button>
+          ${item.cantidad}
+          <button onclick="cambiarCantidad(${index}, 1)">+</button>
+          <button onclick="eliminarItem(${index})">❌</button>
+        </div>
+      </div>
+    `;
+  });
+
+  document.querySelector(".carrito-total").textContent = `Total: Q.${total}`;
+}
+
+function cambiarCantidad(index, cambio) {
+  carrito[index].cantidad += cambio;
+  if (carrito[index].cantidad <= 0) {
+    carrito.splice(index, 1);
+  }
+
+  // Guardar el carrito actualizado en localStorage
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+
+  renderizarCarrito();
+}
+
+function eliminarItem(index) {
+  carrito.splice(index, 1);
+
+  // Guardar el carrito actualizado en localStorage
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+
+  renderizarCarrito();
+}
+
+function redirigirCompra() {
+  window.location.href = "compra.php";
+}
+
+// Activar selección de talla
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("talla")) {
+    const tallas = e.target.parentElement.querySelectorAll(".talla");
+    tallas.forEach(t => t.classList.remove("seleccionada"));
+    e.target.classList.add("seleccionada");
+  }
+});
+</script>
+
+</body>
+</html>
