@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Tatael ._.">
+  <title>Astros Store</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Roboto Condensed', sans-serif;
+      background-color: #fff;
+      color: #000;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #000;
+      color: #fff;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+    nav ul li { cursor: pointer; }
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      transition: transform 0.3s ease, text-decoration 0.3s ease;
+    }
+    nav ul li a:hover {
+      text-decoration: underline;
+      transform: translateY(-5px);
+      display: inline-block;
+    }
+    .ubicacion, .lupa, .carrito {
+      margin-left: 30px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+.lupa {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  font-size: 24px; /* Aumenta el tamaño de la lupa */
+  cursor: pointer;
+  z-index: 101;
+}
+
+.lupa:hover {
+  background-color: #222;
+  border-radius: 8px;
+}
+
+.busqueda {
+  display: none; /* Se mantiene oculta hasta que se haga clic */
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background-color: #fff;
+  color: #000;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 100;
+  width: 400px; /* Cambio: 600px puede salirse en pantallas pequeñas */
+  min-height: 300px;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 90vw;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.busqueda .sugerencias {
+  width: 100%; /* Uso el 100% del ancho disponible */
+  font-size: 18px;
+  padding-right: 10px;
+  /* Eliminado: max-height: 150px; para permitir que las sugerencias ocupen más espacio */
+  overflow-y: auto; /* Mantiene el desplazamiento vertical para las sugerencias si es necesario */
+  border-bottom: 1px solid #ccc; /* Línea divisoria entre sugerencias y resultados */
+}
+
+.busqueda .resultados {
+  width: 100%; /* Uso el 100% del ancho disponible */
+  font-size: 18px;
+}
+
+.busqueda input {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.busqueda ul {
+  margin-top: 10px;
+  padding-left: 0;
+}
+
+.busqueda::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Sugerencias en mayúsculas y fuente utilizada */
+.busqueda .sugerencias strong {
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.busqueda .sugerencias ul li {
+  list-style: none;
+}
+
+.busqueda .sugerencias ul li a {
+  color: black;
+  text-decoration: none;
+}
+
+.busqueda .sugerencias ul li a:hover {
+  color: #007BFF;
+  text-decoration: underline;
+}s
+
+
+    .carrito {
+      position: relative;
+    }
+
+    #carrito-menu {
+      display: none;
+      position: absolute;
+      top: 30px;
+      right: 0;
+      background: #fff;
+      color: #000;
+      width: 300px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      z-index: 100;
+    }
+
+    #carrito-menu.active {
+      display: block;
+    }
+
+    #carrito-items {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .carrito-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+
+    .carrito-controles {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .carrito-controles button {
+      padding: 2px 6px;
+    }
+
+    .carrito-total {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .carrito-menu button {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px;
+    }
+
+    .comprar-btn {
+      background-color: green;
+      color: white;
+      border: none;
+    }
+
+    .print-btn {
+      background-color: gray;
+      color: white;
+      border: none;
+    }
+    .fondo-principal {
+      position: relative;
+      height: 800px;
+      background: url('https://wallpapercave.com/wp/wp9526786.jpg') no-repeat center center/cover;
+    }
+    .fondo-negro {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .fondo-principal::after {
+      content: "LA PASIÓN NO SE EXPLICA, SE VISTE";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 36px;
+      font-weight: bold;
+      z-index: 2;
+    }
+    .categorias {
+      display: grid;
+      grid-template-areas:
+        "started started"
+        "leyends elite"
+        "camisolas camisolas";
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 40px;
+    }
+    .cuadro {
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      height: 250px;
+      overflow: hidden;
+      border-radius: 0;
+      transition: transform 0.3s ease;
+    }
+    .cuadro:hover {
+      transform: translateY(-5px);
+    }
+    .cuadro a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    .cuadro h3 {
+      font-family: inherit;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-size: 24px;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+    }
+    .cuadro p { display: none; }
+    .cuadro.started { grid-area: started; height: 300px; }
+    .cuadro.elite { grid-area: elite; height: 250px; }
+    .cuadro.leyends { grid-area: leyends; height: 250px; }
+    .cuadro.camisolas { grid-area: camisolas; height: 150px; }
+
+    .info-secciones {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .info-secciones h3 {
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+    .info-secciones .quienes-somos,
+    .info-secciones .vision,
+    .info-secciones .mision,
+    .info-secciones .porque-elegirnos {
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 30px;
+      font-size: 22px;
+      border-radius: 15px;
+      transition: transform 0.3s ease;
+    }
+    .info-secciones .quienes-somos:hover,
+    .info-secciones .vision:hover,
+    .info-secciones .mision:hover,
+    .info-secciones .porque-elegirnos:hover {
+      transform: translateY(-5px);
+    }
+    .info-secciones .vision-mision {
+      display: flex;
+      gap: 20px;
+    }
+    .info-secciones .vision,
+    .info-secciones .mision { flex: 1; }
+
+    .banner-scroll {
+      width: 100%;
+      overflow: hidden;
+      background-color: black;
+      color: white;
+      padding: 10px 0;
+      font-family: Arial, sans-serif;
+      position: relative;
+      text-align: center;
+    }
+    .banner-scroll span {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scroll-left 40s linear infinite;
+      font-weight: bold;
+      font-size: 18px;
+      padding-left: 100%;
+    }
+    @keyframes scroll-left {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-100%); }
+    }
+    .match-perfecto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  padding: 40px;
+  margin: 60px 0;
+  width: 100%;
+}
+
+.match-imagen {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.match-imagen img {
+  max-width: 100%;
+  height: auto;
+  opacity: 0.7;
+  mix-blend-mode: multiply;
+  border-radius: 10px;
+}
+
+.ver-mas {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  font-weight: bold;
+  border: 2px solid black;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.ver-mas:hover {
+  background-color: black;
+  color: white;
+}
+
+.match-texto {
+  flex: 1;
+  text-align: center;
+}
+
+.match-texto h2 {
+  font-size: 40px;
+  color: black;
+  margin: 0;
+}
+
+    footer {
+  background-color: black;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.astros-footer {
+  margin-bottom: 10px;
+}
+
+.astros-footer span {
+  
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: bold;
+  
+  /* Nuevo: Aumenta el tamaño de la fuente para que se vea gigante */
+  font-size: 18rem; 
+  
+  /* Nuevo: Ajusta el espaciado entre letras para un efecto más compacto */
+  letter-spacing: -3px; /* Puedes ajustar este valor si lo deseas */
+  
+  /* Propiedades de la animación (sin cambios) */
+  background: linear-gradient(-45deg, red, white, red, white, red);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowMove 4s linear infinite;
+  display: inline-block;
+}
+
+@keyframes rainbowMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+.footer-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+    .contenedor-info {
+      background-color: #e0e0e0;
+      padding: 40px;
+      border-radius: 20px;
+      margin: 40px;
+    }
+
+    .envio-gratis-banner {
+  background-color: white;
+  color: black;
+  text-align: center;
+  padding: 10px 0;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Astros Store</div>
+    <nav>
+      <ul>
+        <li><a href="started-fit.html">Started Fit</a></li>
+        <li><a href="elite fit pro.html">Elite Fit</a></li>
+        <li><a href="legend fit pro.html">Leyends Fit</a></li>
+        <li><a href="camisolas pro 2.html">Camisolas</a></li>
+        <li><a href="accesorios pro.html">Accesorios</a></li>
+        <li><a href="descuntos.html">Sale</a></li>
+      </ul>
+    </nav>
+    <div class="ubicacion">📍 Guatemala</div>
+   <div class="lupa">
+  <span id="iconoLupa">🔍</span>
+  <div class="busqueda" id="cuadroBusqueda">
+    <!-- contenido de búsqueda aquí -->
+    <div class="sugerencias">
+      <strong>SUGERENCIAS</strong>
+      <ul>
+        <li><a href="started-fit.html">Started Fit</a></li>
+        <li><a href="elite fit pro.html">Elite Fit</a></li>
+        <li><a href="leyends fit pro.html">Leyends Fit</a></li>
+        <li><a href="camisolas pro 2.html">Camisolas</a></li>
+        <li><a href="accesorios pro.html">Accesorios</a></li>
+        <li><a href="descuntos.html">Sale</a></li>
+      </ul>
+    </div>
+    <div class="resultados">
+      <strong>RESULTADOS</strong><br>
+      <input type="text" id="campoBusqueda" placeholder="Buscar productos..." oninput="buscarProducto()">
+      <ul id="listaResultados"></ul>
+    </div>
+  </div>
+</div>
+
+    <div class="carrito" onclick="toggleCarrito()">🛒 Carrito
+      <div id="carrito-menu">
+        <p>Tu pedido:</p>
+        <div id="carrito-items"></div>
+        <div class="carrito-total">Total: Q.0</div>
+        <button class="comprar-btn" onclick="redirigirCompra()">Comprar</button>
+        
+      </div>
+    </div>
+
+  </header>
+
+<div class="envio-gratis-banner">
+  ENVIOS GRATIS POR LA COMPRA DE CUALQUIER ARTICULO
+</div>
+
+  <section class="fondo-principal"><div class="fondo-negro"></div></section>
+
+  <div class="banner-scroll">
+    <span> ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● VIVE EL DEPORTE AL MAXIMO RENDIMIENTO ● </span>
+  </div>
+
+<!-- Frase superior en fondo blanco con texto negro -->
+<div style="background-color: white; color: black; padding: 20px; text-align: center; font-family: 'Anton', sans-serif; font-size: 28px; margin: 40px auto 0; max-width: 1000px;">
+  ¿Por qué conformarte con menos cuando puedes vestir la gloria?
+</div>
+
+<div style="grid-column: span 3; background-color: black; color: white; padding: 20px; text-align: center; font-size: 20px; font-family: 'Anton', sans-serif; border-radius: 0;">
+   ¡DESCUBRE NUESTRA COLECCIÓN AHORA!
+  </div>
+
+<section class="categorias">
+
+  <div class="cuadro started" style="background-image: url('https://www.footballshirtculture.com/images/cwgallery/1286-fiorentina-2023-24-kappa-third-kit/1286_fiorentina_2023_24_kappa_third_kit_c.jpeg');">
+    <a href="started-fit.html"><h3>STARTED FIT</h3></a>
+  </div>
+
+  <div class="cuadro leyends" style="background-image: url('https://tntsports.com.ar/__export/1704660097812/sites/tntsports/img/2024/01/07/bellingham.jpeg_1496290752.jpeg');">
+    <a href="legend fit pro.html"><h3>LEYENDS FIT</h3></a>
+  </div>
+
+  <div class="cuadro elite" style="background-image: url('https://icdn.football-italia.net/wp-content/uploads/2024/08/Marcus-Thuram-Inter-grin-770x513.jpg');">
+    <a href="elite fit pro.html"><h3>ELITE FIT</h3></a>
+  </div>
+
+  <div class="cuadro camisolas" style="background-image: url('https://cdn.eventtrips.com/sites/4/2021/12/16092958/tshirts-de-futebol.jpg');">
+    <a href="camisolas pro 2.html"><h3>CAMISOLAS</h3></a>
+  </div>
+</section>
+
+<div style="background-color: white; color: black; padding: 20px; text-align: center; font-family: 'Anton', sans-serif; font-size: 19px; margin: 40px auto 0; max-width: 1000px;">
+  <h2>Cada camisola tiene su media naranja</h2>
+</div>
+
+<section class="match-perfecto">
+  <div class="contenido">
+    <div class="texto">
+      <h2><small>Complementa con estos</small></h2><br>
+      <h2>ACCESORIOS</h2>
+    </div>
+    <div class="imagen-contenedor">
+      <img src="https://th.bing.com/th/id/R.423569f17490dd3d3090e25c4c52bca7?rik=2q1jDI1r9tv7xQ&pid=ImgRaw&r=0" alt="Accesorio" class="imagen-accesorio">
+      <a href="accesorios pro.html" class="boton-vermas">VER MÁS</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.match-perfecto {
+  width: 100%;
+  position: relative;
+  margin-top: 40px;
+}
+
+.contenido {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+}
+
+.texto {
+  position: absolute;
+  left: 0;
+  z-index: 2;
+  padding: 40px;
+  max-width: 50%;
+}
+
+.texto h2 {
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+}
+
+.imagen-contenedor {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.imagen-accesorio {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right;
+  filter: brightness(1);
+  background: linear-gradient(to right, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0) 30%);
+}
+
+.boton-vermas {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  background-color: white;
+  color: black;
+  padding: 12px 24px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s ease;
+  border-radius: 6px;
+  z-index: 3;
+}
+
+.boton-vermas:hover {
+  background-color: black;
+  color: white;
+}
+</style>
+</section>
+
+
+
+<!-- Sección de características con bordes rectos -->
+<div class="contenedor-info" style="background-color: #000; color: #fff; padding: 40px; border-radius: 0; margin: 40px;">
+  <section class="info-secciones" style="gap: 20px;">
+    <h3 style="font-size: 26px; color: #fff; font-family: 'Playfair Display', serif;">Siente la Diferencia en cada Detalle</h3>
+
+    <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
+
+      <div style="background-color: #111; padding: 20px; border-radius: 0;">
+        <h4 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">Tejidos de Alto Rendimiento</h4>
+        <p>Fabricadas con tecnología de punta que te mantiene fresco y cómodo, ya sea que estés jugando un partido con los amigos o celebrando en las gradas.</p>
+      </div>
+
+      <div style="background-color: #111; padding: 20px; border-radius: 0;">
+        <h4 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">Escudos y Logos Impecables</h4>
+        <p>Cada detalle, desde el escudo bordado hasta los logos de los patrocinadores, está recreado a la perfección. La calidad que puedes ver y sentir.</p>
+      </div>
+
+      <div style="background-color: #111; padding: 20px; border-radius: 0;">
+        <h4 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">Corte y Diseño Auténtico</h4>
+        <p>Diseñadas para ajustarse como las de un profesional, dándote no solo el look, sino también la sensación de estar listo para saltar al campo.</p>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 40px; font-size: 20px;">
+      <p style="margin-bottom: 20px;">
+        No estás comprando solo una prenda. Estás invirtiendo en la emoción de cada partido, en los recuerdos de cada victoria y en la armadura que te identifica como un verdadero fanático. Es el regalo perfecto para ti o para ese compañero de grada que comparte tu misma locura.
+      </p>
+      <p style="margin-bottom: 20px;">
+        Viste los colores de tu equipo. Lleva el orgullo en tu pecho. Demuestra de qué estás hecho.
+      </p>
+    </div>
+  </section>
+</div>
+   <footer>
+  <div class="astros-footer">
+    <span>ASTROS STORE</span>
+  </div>
+
+  <div class="footer-content">
+    <div>
+      <p>Contacto:</p>
+      <p>PBX: 2200-0000</p>
+      <p>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=astrosstoregt@gmail.com" target="_blank">
+    astrosstoregt@gmail.com
+  </a>
+</p>
+
+      <p>Dirección: 24av 20-24 Zona 1 Guatemala</p>
+       <p>&copy; 2025 Uniformes Strated Astros Store. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+  <script>
+// Lista de productos con sus URLs de categoría
+const productos = [
+  { nombre: "Selección de Guatemala", url: "started-fit.html" },
+  { nombre: "Comunicaciones FC", url: "started-fit.html" },
+  { nombre: "CSD Municipal", url: "started-fit.html" },
+  { nombre: "Club América", url: "started-fit.html" },
+  { nombre: "Selección de Argentina", url: "started-fit.html" },
+  { nombre: "Selección de Brasil", url: "started-fit.html" },
+  { nombre: "Chivas de Guadalajara", url: "started-fit.html" },
+  { nombre: "Cruz Azul", url: "started-fit.html" },
+  { nombre: "LA Galaxy", url: "started-fit.html" },
+  { nombre: "Tigres UANL", url: "started-fit.html" },
+  { nombre: "Selección de España", url: "started-fit.html" },
+  { nombre: "Orlando City", url: "started-fit.html" },
+  { nombre: "Al-Nassr FC", url: "started-fit.html" },
+  { nombre: "Inter Miami CF", url: "started-fit.html" },
+  { nombre: "Ajax", url: "started-fit.html" },
+
+  { nombre: "Borussia Dortmund", url: "elite fit pro.html" },
+  { nombre: "Olympique de Lyon", url: "elite fit pro.html" },
+  { nombre: "Flamengo", url: "elite fit pro.html" },
+  { nombre: "Atlético de Madrid", url: "elite fit pro.html" },
+  { nombre: "Benfica", url: "elite fit pro.html" },
+  { nombre: "Galatasaray", url: "elite fit pro.html" },
+  { nombre: "Lazio", url: "elite fit pro.html" },
+  { nombre: "RB Leipzig", url: "elite fit pro.html" },
+  { nombre: "Sporting Lisboa", url: "elite fit pro.html" },
+  { nombre: "Napoli", url: "elite fit pro.html" },
+  { nombre: "Palmeiras", url: "elite fit pro.html" },
+  { nombre: "AS Roma", url: "elite fit pro.html" },
+  { nombre: "Sevilla FC", url: "elite fit pro.html" },
+  { nombre: "Villarreal CF", url: "elite fit pro.html" },
+  { nombre: "Tottenham Hotspur", url: "elite fit pro.html" },
+
+  { nombre: "FC Barcelona", url: "legend fit pro.html" },
+  { nombre: "Real Madrid", url: "legend fit pro.html" },
+  { nombre: "Manchester United", url: "legend fit pro.html" },
+  { nombre: "River Plate", url: "legend fit pro.html" },
+  { nombre: "Paris Saint-Germain", url: "legend fit pro.html" },
+  { nombre: "AC Milan", url: "legend fit pro.html" },
+  { nombre: "Liverpool FC", url: "legend fit pro.html" },
+  { nombre: "Juventus", url: "legend fit pro.html" },
+  { nombre: "Inter de Milán", url: "legend fit pro.html" },
+  { nombre: "Manchester City", url: "legend fit pro.html" },
+  { nombre: "Chelsea FC", url: "legend fit pro.html" },
+  { nombre: "Boca Juniors", url: "legend fit pro.html" },
+  { nombre: "Bayern Múnich", url: "legend fit pro.html" },
+  { nombre: "Arsenal FC", url: "legend fit pro.html" },
+  { nombre: "Ajax", url: "legend fit pro.html" },
+
+  { nombre: "FC Barcelona (2008-2009)", url: "camisolas pro 2.html" },
+  { nombre: "Real Madrid (2001-2002)", url: "camisolas pro 2.html" },
+  { nombre: "Manchester United (1998-1999)", url: "camisolas pro 2.html" },
+  { nombre: "River Plate (1996)", url: "camisolas pro 2.html" },
+  { nombre: "Brasil Fc (2002)", url: "camisolas pro 2.html" },
+  { nombre: "AC Milan (2006-2007)", url: "camisolas pro 2.html" },
+  { nombre: "Argentina Fc (1986)", url: "camisolas pro 2.html" },
+  { nombre: "Juventus (1995-1996)", url: "camisolas pro 2.html" },
+  { nombre: "Alemania Fc (1990)", url: "camisolas pro 2.html" },
+  { nombre: "Francia Fc (1990)", url: "camisolas pro 2.html" },
+  { nombre: "Holanda Fc (1988)", url: "camisolas pro 2.html" },
+  { nombre: "Boca Juniors (2001-2002)", url:"camisolas pro 2.html" },
+  { nombre: "Bayern Múnich (2000-2001)", url: "camisolas pro 2.html" },
+  { nombre: "Arsenal FC (2003-2004)", url: "camisolas pro 2.html" },
+  { nombre: "Ajax (1995)", url:"camisolas pro 2.html" },
+
+  { nombre: "Medias negras", url: "accesorios pro.html" },
+  { nombre: "Medias blancas", url: "accesorios pro.html" },
+  { nombre: "Balón Champions 2025", url: "accesorios pro.html" },
+  { nombre: "Balón Mundial 2025", url: "accesorios pro.html" },
+  { nombre: "Guantes Adidas", url: "accesorios pro.html" },
+  { nombre: "Guantes Nike", url: "accesorios pro.html" }
+];
+
+// Función para manejar los resultados de búsqueda y redirigir
+function buscarProducto() {
+  const entrada = document.getElementById("campoBusqueda").value.toLowerCase();
+  const lista = document.getElementById("listaResultados");
+  lista.innerHTML = "";
+
+  if (entrada.trim() === "") return;
+
+  const resultados = productos.filter(p => p.nombre.toLowerCase().includes(entrada));
+
+  if (resultados.length === 0) {
+    lista.innerHTML = "<li>Lo sentimos, no contamos con ese producto 😔</li>";
+  } else {
+    resultados.forEach(p => {
+      const li = document.createElement("li");
+      li.textContent = p.nombre;
+      li.addEventListener("click", function() {
+        window.location.href = p.url; // Redirige a la categoría
+      });
+      lista.appendChild(li);
+    });
+  }
+} // --- BUSCADOR ---
+
+// Mostrar/Ocultar búsqueda al hacer clic en la lupa
+document.getElementById('iconoLupa').addEventListener('click', function (e) {
+  const cuadro = document.getElementById('cuadroBusqueda');
+  const visible = cuadro.style.display === 'flex';
+  cuadro.style.display = visible ? 'none' : 'flex';
+  e.stopPropagation(); // Detiene la propagación del clic para no cerrarlo inmediatamente
+});
+
+// Cierra la búsqueda si haces clic fuera
+document.addEventListener('click', function (e) {
+  const cuadro = document.getElementById('cuadroBusqueda');
+  const lupa = document.getElementById('iconoLupa');
+  if (!cuadro.contains(e.target) && e.target !== lupa) {
+    cuadro.style.display = 'none';
+  }
+});
+
+// Evita que al hacer clic dentro del cuadro de búsqueda se cierre
+document.getElementById('cuadroBusqueda').addEventListener('click', function (e) {
+  e.stopPropagation();
+});
+
+// --- CARRITO ---
+
+
+let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+function toggleCarrito() {
+  const menu = document.getElementById("carrito-menu");
+  menu.classList.toggle("active");
+}
+
+function agregarAlCarrito(boton) {
+  const card = boton.closest(".card");
+  const nombre = card.getAttribute("data-nombre");
+  const precio = parseFloat(card.getAttribute("data-precio"));
+  const tallaSeleccionada = card.querySelector(".talla.seleccionada");
+
+  if (!tallaSeleccionada) {
+    alert("Selecciona una talla antes de agregar al carrito.");
+    return;
+  }
+
+  const talla = tallaSeleccionada.textContent;
+  const nombreConTalla = `${nombre} - Talla ${talla}`;
+
+  const existente = carrito.find(item => item.nombre === nombreConTalla);
+  if (existente) {
+    existente.cantidad++;
+  } else {
+    carrito.push({ nombre: nombreConTalla, precio, cantidad: 1 });
+  }
+
+  // Guardar el carrito en localStorage
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+
+  renderizarCarrito();
+}
+
+function renderizarCarrito() {
+  const contenedor = document.getElementById("carrito-items");
+  contenedor.innerHTML = "";
+  let total = 0;
+
+  carrito.forEach((item, index) => {
+    total += item.precio * item.cantidad;
+    contenedor.innerHTML += `
+      <div class="carrito-item">
+        <div>${item.nombre} (Q.${item.precio})</div>
+        <div class="carrito-controles">
+          <button onclick="cambiarCantidad(${index}, -1)">-</button>
+          ${item.cantidad}
+          <button onclick="cambiarCantidad(${index}, 1)">+</button>
+          <button onclick="eliminarItem(${index})">❌</button>
+        </div>
+      </div>
+    `;
+  });
+
+  document.querySelector(".carrito-total").textContent = `Total: Q.${total}`;
+}
+
+function cambiarCantidad(index, cambio) {
+  carrito[index].cantidad += cambio;
+  if (carrito[index].cantidad <= 0) {
+    carrito.splice(index, 1);
+  }
+
+  // Guardar el carrito actualizado en localStorage
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+
+  renderizarCarrito();
+}
+
+function eliminarItem(index) {
+  carrito.splice(index, 1);
+
+  // Guardar el carrito actualizado en localStorage
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+
+  renderizarCarrito();
+}
+
+function redirigirCompra() {
+  window.location.href = "compra.php";
+}
+
+// Activar selección de talla
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("talla")) {
+    const tallas = e.target.parentElement.querySelectorAll(".talla");
+    tallas.forEach(t => t.classList.remove("seleccionada"));
+    e.target.classList.add("seleccionada");
+  }
+});
+</script>
+
+</body>
+</html>
